@@ -7,6 +7,7 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
+#include "cube.h"
 
 GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -24,6 +25,10 @@ GPIO_InitTypeDef GPIO_InitStructure;
 #define GPIOE_USED_WO_LAY	(0xFFFF)
 #define GPIOH_USED_WO_LAY	(0x0003)
 
+#define GPIOA_USED_LAY		(0x2800)
+#define GPIOC_USED_LAY		(0x03C0)
+#define GPIOD_USED_LAY		(0x0A00)
+
 volatile uint16_t valueA;
 volatile uint16_t valueB;
 volatile uint16_t valueC;
@@ -31,8 +36,10 @@ volatile uint16_t valueD;
 volatile uint16_t valueE;
 volatile uint16_t valueH;
 
-void gpio_init(void);
-void drawLayer(/*array*/);
+void initGPIO(void);
+void activateLayer(uint8_t i);
+void deactivateLayers(void);
+void drawLayer(uint8_t layer[CUBE_SIZE]);
 void drawRow(uint8_t row, uint8_t value);
 void drawRow0(uint8_t value);
 void drawRow1(uint8_t value);

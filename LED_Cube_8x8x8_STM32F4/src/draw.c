@@ -5,9 +5,9 @@
  *      Author: tobiasbildner
  */
 
-#include "draw.h";
+#include "draw.h"
 
-void gpio_init(void) {
+void initGPIO(void) {
 	/* GPIOA Periph clock enable */
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	/* Configure in output pushpull mode */
@@ -69,7 +69,44 @@ uint8_t extractBit(uint8_t count, uint8_t value) {
 	return value;
 }
 
-void drawLayer(/*array*/) {
+void activateLayer(uint8_t i) {
+	switch (i) {
+	case 0:
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+		break;
+	case 1:
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+		break;
+	case 2:
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+		break;
+	case 3:
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+		break;
+	case 4:
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+		break;
+	case 5:
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_13, GPIO_PIN_SET);
+		break;
+	case 6:
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+		break;
+	case 7:
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
+		break;
+	default:
+		break;
+	}
+}
+
+void deactivateLayers(void) {
+	HAL_GPIO_WritePin(GPIOA, GPIOA_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIOC_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOD, GPIOD_USED_WO_LAY, GPIO_PIN_RESET);
+}
+
+void drawLayer(uint8_t layer[CUBE_SIZE]) {
 	valueA = 0x0000;
 	valueB = 0x0000;
 	valueC = 0x0000;
@@ -77,17 +114,17 @@ void drawLayer(/*array*/) {
 	valueE = 0x0000;
 	valueH = 0x0000;
 
-	for (uint8_t i = 0; i < 8; ++i) {
-		drawRow(i, i);
+	for (uint8_t i = 0; i < CUBE_SIZE; i++) {
+		drawRow(i, layer[i]);
 	}
 
 	// Reset Bits (just Rows not Layer-Activation-Bits)
-	HAL_GPIO_WritePin(GPIOA, 0xC402, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, 0xFFFF, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC, 0xFC3F, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOD, 0x01DF, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOE, 0xFFFF, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOH, 0x0003, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GPIOA_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIOB_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIOC_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOD, GPIOD_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOE, GPIOE_USED_WO_LAY, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOH, GPIOH_USED_WO_LAY, GPIO_PIN_RESET);
 
 	// Set Bits
 	HAL_GPIO_WritePin(GPIOA, valueA, GPIO_PIN_SET);
